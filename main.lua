@@ -57,6 +57,9 @@ function love.keypressed(key)
       side = right
     end
   elseif key == 'p' then
+    if pause then
+      love.window.setTitle(string.format('snake by kupp | score: %s', score))
+    end
     pause = not pause
   end
 end
