@@ -16,6 +16,7 @@ function love.load()
 
 
   speed = 0.1
+  speed_step = 0.003 
 
   collision = false
 
@@ -31,10 +32,6 @@ function love.load()
                y = height / board_size.y}
   snake = queue.new()
   place_snake()
-  --local first, last = queue.getedges(snake)
-  --for i = first, last do
-  --  print(queue.getn(snake, i).x)
-  --end
 end
 
 function love.keypressed(key)
@@ -58,7 +55,7 @@ function love.keypressed(key)
     end
   elseif key == 'p' then
     if pause then
-      love.window.setTitle(string.format('snake by kupp | score: %s', score))
+      love.window.setTitle(string.format('snake by kupp | score: %d', score))
     end
     pause = not pause
   end
@@ -79,16 +76,16 @@ function love.draw()
     if collision then
       love.graphics.setColor(1, 1, 1)
       print_centered_text('GAME OVER')
-      love.window.setTitle('snake by kupp | GAME OVER')
+      love.window.setTitle(string.format('snake by kupp | GAME OVER | score: %d', score))
     end
-    love.graphics.setBackgroundColor(69/255, 67/255, 67/255)
+    love.graphics.setBackgroundColor(colors.back)
     if apple_placed then
-      love.graphics.setColor(209/255,231/255,81/255)
+      love.graphics.setColor(colors.apple)
       love.graphics.rectangle("fill", apple.x * cell_size.x,
                               apple.y * cell_size.y,
                               cell_size.x, cell_size.y)
     end
-    love.graphics.setColor(252/255,145/255,58/255)
+    love.graphics.setColor(colors.body)
     local first, last = queue.getedges(snake)
     for i = first, last-1 do
       local v = queue.getn(snake, i)
@@ -96,7 +93,7 @@ function love.draw()
                               v.y * cell_size.y,
                               cell_size.x, cell_size.y)
     end
-    love.graphics.setColor(250/255,2/255,60/255)
+    love.graphics.setColor(colors.head)
     v = queue.getlast(snake)
     love.graphics.rectangle("fill", v.x * cell_size.x,
                               v.y * cell_size.y,
@@ -104,7 +101,7 @@ function love.draw()
   if pause and not collision then
     love.graphics.setColor(1, 1, 1)
     print_centered_text('PAUSE')
-    love.window.setTitle('snake by kupp | PAUSE')
+    love.window.setTitle((string.format('snake by kupp | PAUSE | score: %d', score)))
   end
 end
 
@@ -154,9 +151,9 @@ function check_apple()
   local head = queue.getlast(snake)
   if apple_placed and head.x == apple.x and head.y == apple.y then
     score = score + 1
-    love.window.setTitle(string.format('snake by kupp | score: %s', score))
+    love.window.setTitle(string.format('snake by kupp | score: %d', score))
     apple_placed = false
-    speed = speed - 0.003
+    speed = speed - speed_step
     push_to_snake()
   end
   if not apple_placed then
